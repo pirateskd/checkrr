@@ -379,6 +379,9 @@ func setDefaults() {
 	// Arr automation
 	k.Set("checkrr.arr.reacquire", true)
 
+	// Set default db
+	k.Set("checkrr.database", "/etc/checkrr/checkrr.db")
+
 	// Optional (if you plan to support moving subtitles/fonts/images with a bad file)
 	// k.Set("checkrr.quarantine.sidecarExtensions", []string{".srt", ".ass", ".ssa", ".vtt", ".sub", ".idx", ".ttml", ".ttf", ".otf", ".nfo", ".jpg", ".png"})
 }
