@@ -367,7 +367,27 @@ func initFlags() {
 	}
 }
 
+func setDefaults() {
+	// Scan profiles
+	k.Set("checkrr.scan.mode", "fast")              // fast|enhanced|full
+	k.Set("checkrr.scan.enhancedSeconds", 60)       // enhanced max decode time
+
+	// Quarantine behavior
+	k.Set("checkrr.quarantine.path", "/quarantine")
+	k.Set("checkrr.quarantine.retentionDays", 14)
+
+	// Arr automation
+	k.Set("checkrr.arr.reacquire", true)
+
+	// Optional (if you plan to support moving subtitles/fonts/images with a bad file)
+	// k.Set("checkrr.quarantine.sidecarExtensions", []string{".srt", ".ass", ".ssa", ".vtt", ".sub", ".idx", ".ttml", ".ttf", ".otf", ".nfo", ".jpg", ".png"})
+}
+
+
 func initConfig() {
+
+	setDefaults()
+	
 	if cfgFile != "" {
 		if err := k.Load(file.Provider(cfgFile), yaml.Parser()); err != nil {
 			logger.LastResort.Fatalf("Error loading config file: %s\n %s", cfgFile, err)
