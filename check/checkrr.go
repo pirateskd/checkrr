@@ -47,6 +47,12 @@ type Checkrr struct {
 	Chan          *chan []string
 	Logger        *logging.Log
 	Localizer     *i18n.Localizer
+  	ScanMode            string
+  	EnhancedSeconds     int
+  	QuarantinePath      string
+  	QuarantineRetention int
+  	ArrReacquire        bool
+  	SidecarExtensions   []string
 }
 
 func (c *Checkrr) Run() {
@@ -238,7 +244,29 @@ func (c *Checkrr) Run() {
 
 func (c *Checkrr) FromConfig(conf *koanf.Koanf) {
 	c.config = conf
+
+	// NEW: scan profiles
+	c.ScanMode = strings.ToLower(conf.String("scan.mode"))
+	if c.ScanMode == "" {
+		c.ScanMode = "fast"
+	}
+	c.EnhancedSeconds = conf.Int("scan.enhancedSeconds")
+	if c.EnhancedSeconds <= 0 {
+		c.EnhancedSeconds = 60
+	}
+
+	// NEW: quarantine
+	c.QuarantinePath = conf.String("quarantine.path")
+	c.QuarantineRetention = conf.Int("quarantine.retentionDays")
+	if c.QuarantineRetention <= 0 {
+		c.QuarantineRetention = 14
+	}
+	c.SidecarExtensions = conf.Strings("quarantine.sidecarExtensions")
+
+	// NEW: arr automation
+	c.ArrReacquire = conf.Bool("arr.reacquire")
 }
+
 
 func (c *Checkrr) connectServices() {
 	if c.FullConfig.Get("arr") != nil {
