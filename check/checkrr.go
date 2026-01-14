@@ -410,6 +410,18 @@ func (c *Checkrr) checkFile(path string) {
 			data, buf, err = nil, nil, nil
 			return
 		} else {
+			// ✅ NEW: corruption detection based on scan mode
+			corrupt, why := c.isCorrupt(path)
+			if corrupt {
+			    c.Logger.WithFields(log.Fields{
+			        "Path":   path,
+			        "Reason": why,
+			        "Mode":   c.ScanMode,
+			    }).Warn("Corruption detected")
+			
+			    c.quarantineAndReacquire(path, why)
+			    return
+			}
 			c.Logger.WithFields(log.Fields{"Format": data.Format.FormatLongName, "Type": detectedFileType, "FFProbe": true}).Infof(data.Format.Filename)
 
 			c.Logger.Debug(data.Format.FormatName)
